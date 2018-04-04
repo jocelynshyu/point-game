@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>尋云羽球積分賽</title>
+  <link rel="icon" type="image/png" sizes="48x48" href="images/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container" id="app">
+    <topbar></topbar>
+
+    <main class="main">
+      <team :team="teamA" v-bind="{ onClick: onPosClick }"></team>
+      <team :team="teamB" v-bind="{ onClick: onPosClick }"></team>
+      <result :result="resultA"></result>
+      <result :result="resultB"></result>
+    </main>
+
+    <selector
+      v-if="choosingPos"
+      :players="playersRemain"
+      v-bind="{ onChoose: onPlayerChoose, onClose: onSelectorClose }"
+    ></selector>
+  </div>
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
