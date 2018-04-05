@@ -52,7 +52,7 @@ const Main = {
 
 const Player = {
   template: `
-    <div class="player" @click="onClick(player)">
+    <div class="player">
       <img v-if="!player.id" class="icon" alt="" src="images/user-add.png" />
       <template v-else>
         <img
@@ -77,7 +77,11 @@ const Player = {
     },
   },
   methods: {
-    onAvatarError() { this.avatarError = true; }
+    onAvatarError() { this.avatarError = true; },
+    onPlayerClick () {
+      const { player, onClick } = this;
+      if (onClick) onClick(player);
+    },
   },
 };
 
@@ -239,7 +243,7 @@ const PageBattle = {
     onSelectorClose() {
       setTimeout(() => {
         this.choosingPos = null;
-      }, 500);
+      }, 200);
     },
 
     onPlayerChoose({ id }) {
@@ -256,21 +260,82 @@ const PageBattle = {
 
 
 
-
 //   88  88  dP"Yb  8b    d8 888888
 //   88  88 dP   Yb 88b  d88 88__
 //   888888 Yb   dP 88YbdP88 88""
 //   88  88  YbodP  88 YY 88 888888
 
-const Home = {
+const PageHome = {
   template: `
     <div class="home">
-      <router-link class="home-link" :to="{ name: 'home' }">
-        <img />
+      <router-link class="home-link blue" :to="{ name: 'rank' }">
+        <img class="icon" src="images/rank.png" alt="英雄榜" />
+      </router-link>
+      <router-link class="home-link red" :to="{ name: 'battle' }">
+        <img class="icon" src="images/fire.png" alt="對決吧！" />
       </router-link>
     </div>
   `,
 };
+
+
+
+//   88""Yb    db    88b 88 88  dP 
+//   88__dP   dPYb   88Yb88 88odP  
+//   88"Yb   dP__Yb  88 Y88 88"Yb  
+//   88  Yb dP""""Yb 88  Y8 88  Yb 
+
+const PageRank = {
+  template: `
+    <div class="rank">
+      <template v-for="list in [top3, passerby]">
+        <h2>{{list.title}}</h2>
+        <div class="player-list">
+          <router-link
+            v-for="player in list.players"
+            class="player-link"
+            :to="{ name: 'player', params: { id: player.id } }"
+          >
+            <Player :player="player" />
+          </router-link>
+        </div>
+      </template>
+    </div>
+  `,
+  components: { Player },
+  data() { return { players: [] }; },
+
+  computed: {
+    top3() {
+      return {
+        title: 'Catch Me if You Can',
+        players: this.players.filter((p, idx) => idx < 3),
+      };
+    },
+    passerby() {
+      return {
+        title: '回家多練練吧！',
+        players: this.players.filter((p, idx) => idx >= 3),
+      };
+    },
+  },
+
+  mounted() {
+    axios.get(`${API_DOMAIN}/members/all`)
+      .then(({ data: { members } }) => { this.players = members; });
+  },
+};
+
+
+
+const PagePlayer = {
+  template: `
+    <div class="personal">
+      <img class="icon" alt="" src="images/rocket-fly.png" />
+      <span style="margin-top: 20px">努力中請稍候~</span>
+    </div>
+  `,
+}
 
 
 
@@ -284,8 +349,10 @@ const routes = [
     path: '/',
     component: Main,
     children: [
-      { path: '', component: Home, name: 'home' },
+      { path: '', component: PageHome, name: 'home' },
+      { path: 'rank', component: PageRank, name: 'rank' },
       { path: 'battle', component: PageBattle, name: 'battle' },
+      { path: 'player/:id', component: PagePlayer, name: 'player' },
     ],
   },
 ];
