@@ -1,5 +1,5 @@
 if (location.protocol === 'https:') {
-  location.href = window.location.href.replace(/^https/, 'http:');
+  location.href = location.href.replace(/^https:/, 'http:');
 }
 
 const API_DOMAIN = 'http://ladder.puffsnow.cc';
