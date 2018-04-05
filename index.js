@@ -52,7 +52,7 @@ const Main = {
 
 const Player = {
   template: `
-    <div class="player">
+    <div class="player" @click="onPlayerClick">
       <img v-if="!player.id" class="icon" alt="" src="images/user-add.png" />
       <template v-else>
         <img
