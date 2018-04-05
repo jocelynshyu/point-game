@@ -1,25 +1,4 @@
-const players = [
-  { id: '001', name: '欸頗', avatar: 'https://picsum.photos/200/200?image=10', points: 700 },
-  { id: '002', name: '巴拿拿', avatar: 'https://picsum.photos/200/200?image=20', points: 800 },
-  { id: '003', name: '銃銃', avatar: 'https://picsum.photos/200/200?image=30', points: 120 },
-  { id: '004', name: '臨時政府', avatar: 'https://picsum.photos/200/200?image=40', points: 300 },
-  { id: '005', name: '哇哈哈', avatar: 'https://picsum.photos/200/200?image=50', points: 500 },
-  { id: '006', name: '嘿嘿嘿', avatar: 'https://picsum.photos/200/200?image=60', points: 550 },
-  { id: '007', name: '哈囉你好嗎', avatar: 'https://picsum.photos/200/200?image=70', points: 130 },
-  { id: '008', name: '聖粉', avatar: 'https://picsum.photos/200/200?image=80', points: 140 },
-  { id: '009', name: '小當家', avatar: 'https://picsum.photos/200/200?image=90', points: 150 },
-  { id: '010', name: 'John Doe', avatar: 'https://picsum.photos/200/200?image=100', points: 170 },
-  { id: '011', name: '賈斯林', avatar: 'https://picsum.photos/200/200?image=110', points: 160 },
-  { id: '012', name: '賽門', avatar: 'https://picsum.photos/200/200?image=120', points: 920 },
-  { id: '013', name: '阿囉哈', avatar: 'https://picsum.photos/200/200?image=130', points: 80 },
-  { id: '014', name: '草泥馬', avatar: 'https://picsum.photos/200/200?image=140', points: 5 },
-  { id: '015', name: '勇者', avatar: 'https://picsum.photos/200/200?image=250', points: 110 },
-  { id: '016', name: '安安你好', avatar: 'https://picsum.photos/200/200?image=160', points: 650 },
-  { id: '017', name: '珍重再見', avatar: 'https://picsum.photos/200/200?image=170', points: 320 },
-  { id: '018', name: '小白', avatar: 'https://picsum.photos/200/200?image=180', points: 720 },
-  { id: '019', name: '姐妹花雞排', avatar: 'https://picsum.photos/200/200?image=190', points: 50 },
-  { id: '020', name: '掃地僧', avatar: 'https://picsum.photos/200/200?image=200', points: 10000 },
-];
+const API_DOMAIN = 'http://ladder.puffsnow.cc';
 
 const getRules = (gap) => {
   if (gap <= -5000) return [50, -40];
@@ -46,7 +25,7 @@ Vue.component('topbar', {
   template: `
     <div class="topbar">
       <img class="topbar__logo" src="images/favicon.png" alt="尋云羽球積分網" />
-      <h1 class="topbar__title">尋云羽球積分網</h1>
+      <h1 class="topbar__title">翻<span class="gray">尋</span>云覆羽<span class="gray">球積分網</span></h1>
     </div>
   `,
 });
@@ -56,11 +35,29 @@ Vue.component('player', {
   template: `
     <div class="player" @click="onClick(player)">
       <div class="player__icon" v-if="!player.id">+</div>
-      <img v-if="player.id" class="player__avatar" :src="player.avatar" :alt="player.name" />
-      <p v-if="player.id" class="player__info">{{player.name}}<br /> ({{player.points}})</p>
+      <img
+        v-if="player.id"
+        class="player__avatar"
+        :src="avatar"
+        :alt="player.name"
+        @error="onAvatarError"
+      />
+      <p v-if="player.id" class="player__info">{{player.name}}<br /> ({{player.point}})</p>
     </div>
   `,
   props: ['player', 'onClick'],
+  data() {
+    return { avatarError: false };
+  },
+  computed: {
+    avatar() {
+      if (!this.player.fb_id || this.avatarError) return 'images/avatar.jpg';
+      return `https://graph.facebook.com/${this.player.fb_id}/picture?type=large`;
+    },
+  },
+  methods: {
+    onAvatarError() { this.avatarError = true; }
+  },
 });
 
 // 隊伍基本資訊
@@ -102,7 +99,7 @@ Vue.component('selector', {
     <div class="selector">
       <div class="selector__header">
         <input class="selector__input" v-model="search" placeholder="輸入名字來搜尋吧！" />
-        <span class="selector__button" @click="onClose">取消</span>
+        <span class="selector__button" @click="onClose">關閉</span>
       </div>
       <div class="selector__main">
         <div class="player-list">
@@ -133,6 +130,7 @@ new Vue({
 
   data() {
     return {
+      players: [],
       a1: null,
       a2: null,
       b1: null,
@@ -153,14 +151,14 @@ new Vue({
     playersRemain() {
       const { a1, a2, b1, b2, search } = this;
       const chosenPlayers = [a1, a2, b1, b2].filter(p => p);
-      return players.filter(({ id }) => chosenPlayers.indexOf(id) === -1);
+      return this.players.filter(({ id }) => chosenPlayers.indexOf(id) === -1);
     },
   },
 
   methods: {
     getPlayerInfo(playerId) {
       if (!playerId) return {};
-      const player = players.filter(({ id }) => id === playerId)[0];
+      const player = this.players.filter(({ id }) => id === playerId)[0];
       return player || {};
     },
 
@@ -168,7 +166,7 @@ new Vue({
       const choosenPlayers = players.filter(({ id }) => id);
       const amount = choosenPlayers.length;
       if (!amount) return 0;
-      const sum = choosenPlayers.reduce((sum, { points }) => sum + points, 0);
+      const sum = choosenPlayers.reduce((sum, { point }) => sum + point, 0);
       return sum / amount;
     },
 
@@ -204,5 +202,10 @@ new Vue({
       this[this.choosingPos] = id;
       this.onSelectorClose();
     },
+  },
+
+  mounted() {
+    axios.get(`${API_DOMAIN}/members/all`)
+      .then(({ data: { members } }) => { this.players = members });
   },
 });

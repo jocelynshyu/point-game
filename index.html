@@ -21,7 +21,7 @@
     </main>
 
     <selector
-      v-if="choosingPos"
+      v-show="choosingPos"
       :players="playersRemain"
       v-bind="{ onChoose: onPlayerChoose, onClose: onSelectorClose }"
     ></selector>
