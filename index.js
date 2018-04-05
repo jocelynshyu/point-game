@@ -98,6 +98,7 @@ const BattleTeam = {
       <div class="team-members">
         <Player
           v-for="player in team.members"
+          :key="player.id"
           :player="player"
           v-bind="{ onClick: onClick.bind(null, player) }"
         />
@@ -133,6 +134,7 @@ const BattleSelector = {
         <div class="player-list">
           <Player
             v-for="player in playersRemain"
+            :key="player.id"
             :player="player"
             v-bind="{ onClick: onChoose.bind(null, player) }"
           />
@@ -288,12 +290,13 @@ const PageHome = {
 const PageRank = {
   template: `
     <div class="rank">
-      <template v-for="list in [top3, passerby]">
+      <template v-for="list in [top3, passerby]" :key="list.title">
         <h2>{{list.title}}</h2>
         <div class="player-list">
           <router-link
             v-for="player in list.players"
             class="player-link"
+            :key="player.id"
             :to="{ name: 'player', params: { id: player.id } }"
           >
             <Player :player="player" />
