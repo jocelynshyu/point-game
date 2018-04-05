@@ -10,24 +10,12 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container" id="app">
-    <topbar></topbar>
-
-    <main class="main">
-      <team :team="teamA" v-bind="{ onClick: onPosClick }"></team>
-      <team :team="teamB" v-bind="{ onClick: onPosClick }"></team>
-      <result :result="resultA"></result>
-      <result :result="resultB"></result>
-    </main>
-
-    <selector
-      v-show="choosingPos"
-      :players="playersRemain"
-      v-bind="{ onChoose: onPlayerChoose, onClose: onSelectorClose }"
-    ></selector>
+  <div id="app">
+    <router-view></router-view>
   </div>
 
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/vue-router/dist/vue-router.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js"></script>
   <script src="index.js"></script>
 </body>

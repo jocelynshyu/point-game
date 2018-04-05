@@ -1,3 +1,7 @@
+if (location.protocol === 'https:') {
+  location.href = window.location.href.replace(/^https/, 'http:');
+}
+
 const API_DOMAIN = 'http://ladder.puffsnow.cc';
 
 const getRules = (gap) => {
@@ -20,29 +24,47 @@ const getRules = (gap) => {
 
 
 
-// topbar
-Vue.component('topbar', {
+//    dP""b8 888888 88b 88 888888 88""Yb    db    88
+//   dP   `" 88__   88Yb88 88__   88__dP   dPYb   88
+//   Yb  "88 88""   88 Y88 88""   88"Yb   dP__Yb  88  .o
+//    YboodP 888888 88  Y8 888888 88  Yb dP""""Yb 88ood8
+
+const Topbar = {
   template: `
     <div class="topbar">
-      <img class="topbar__logo" src="images/favicon.png" alt="尋云羽球積分網" />
+      <router-link :to="{ name: 'home' }">
+        <img class="icon topbar__logo" src="images/favicon.png" alt="尋云羽球積分網" />
+      </router-link>
       <h1 class="topbar__title">翻<span class="gray">尋</span>云覆羽<span class="gray">球積分網</span></h1>
     </div>
   `,
-});
+};
 
-// 球員大頭貼
-Vue.component('player', {
+const Main = {
+  template: `
+    <div class="container">
+      <Topbar />
+      <router-view></router-view>
+    </div>
+  `,
+  components: { Topbar },
+};
+
+const Player = {
   template: `
     <div class="player" @click="onClick(player)">
-      <div class="player__icon" v-if="!player.id">+</div>
-      <img
-        v-if="player.id"
-        class="player__avatar"
-        :src="avatar"
-        :alt="player.name"
-        @error="onAvatarError"
-      />
-      <p v-if="player.id" class="player__info">{{player.name}}<br /> ({{player.point}})</p>
+      <img v-if="!player.id" class="icon" alt="" src="images/user-add.png" />
+      <template v-else>
+        <img
+          v-if="player && !avatarError"
+          class="player__avatar"
+          :src="avatar"
+          :alt="player.name"
+          @error="onAvatarError"
+        />
+        <img v-else="avatarError" class="player__avatar tiny" alt="" src="images/ghost.png" />
+        <p class="player__info">{{player.name}}<br /> ({{player.point}})</p>
+      </template>
     </div>
   `,
   props: ['player', 'onClick'],
@@ -51,21 +73,26 @@ Vue.component('player', {
   },
   computed: {
     avatar() {
-      if (!this.player.fb_id || this.avatarError) return 'images/avatar.jpg';
       return `https://graph.facebook.com/${this.player.fb_id}/picture?type=large`;
     },
   },
   methods: {
     onAvatarError() { this.avatarError = true; }
   },
-});
+};
 
-// 隊伍基本資訊
-Vue.component('team', {
+
+
+//   88""Yb    db    888888 888888 88     888888
+//   88__dP   dPYb     88     88   88     88__
+//   88""Yb  dP__Yb    88     88   88  .o 88""
+//   88oodP dP""""Yb   88     88   88ood8 888888
+
+const BattleTeam = {
   template: `
     <div class="team">
       <div class="team-members">
-        <player
+        <Player
           v-for="player in team.members"
           :player="player"
           v-bind="{ onClick: onClick.bind(null, player) }"
@@ -76,11 +103,11 @@ Vue.component('team', {
       </p>
     </div>
   `,
+  components: { Player },
   props: ['team', 'onClick'],
-});
+};
 
-// 隊伍勝負資訊
-Vue.component('result', {
+const BattleResult = {
   template: `
     <div>
       <p class="slogan">{{result.title}}</p>
@@ -89,12 +116,9 @@ Vue.component('result', {
     </div>
   `,
   props: ['result'],
-});
+};
 
-
-
-// 選擇視窗
-Vue.component('selector', {
+const BattleSelector = {
   template: `
     <div class="selector">
       <div class="selector__header">
@@ -103,7 +127,7 @@ Vue.component('selector', {
       </div>
       <div class="selector__main">
         <div class="player-list">
-          <player
+          <Player
             v-for="player in playersRemain"
             :player="player"
             v-bind="{ onClick: onChoose.bind(null, player) }"
@@ -112,6 +136,7 @@ Vue.component('selector', {
       </div>
     </div>
   `,
+  components: { Player },
   props: ['players', 'onChoose', 'onClose'],
   data() { return { search: '' }; },
   computed: {
@@ -121,12 +146,27 @@ Vue.component('selector', {
       return players.filter(({ name }) => pattern.test(name.toLowerCase()));
     },
   },
-});
+};
 
+const PageBattle = {
+  template: `
+    <div class="battle">
+      <main class="main">
+        <BattleTeam :team="teamA" v-bind="{ onClick: onPosClick }" />
+        <BattleTeam :team="teamB" v-bind="{ onClick: onPosClick }" />
+        <BattleResult :result="resultA" />
+        <BattleResult :result="resultB" />
+      </main>
 
+      <BattleSelector
+        v-bind:class="{ active: choosingPos }"
+        :players="playersRemain"
+        v-bind="{ onChoose: onPlayerChoose, onClose: onSelectorClose }"
+      />
+    </div>
+  `,
 
-new Vue({
-  el: "#app",
+  components: { BattleTeam, BattleResult, BattleSelector },
 
   data() {
     return {
@@ -196,7 +236,11 @@ new Vue({
     },
 
     onPosClick({ pos }) { this.choosingPos = pos; },
-    onSelectorClose() { this.choosingPos = null; },
+    onSelectorClose() {
+      setTimeout(() => {
+        this.choosingPos = null;
+      }, 500);
+    },
 
     onPlayerChoose({ id }) {
       this[this.choosingPos] = id;
@@ -208,4 +252,44 @@ new Vue({
     axios.get(`${API_DOMAIN}/members/all`)
       .then(({ data: { members } }) => { this.players = members });
   },
-});
+};
+
+
+
+
+//   88  88  dP"Yb  8b    d8 888888
+//   88  88 dP   Yb 88b  d88 88__
+//   888888 Yb   dP 88YbdP88 88""
+//   88  88  YbodP  88 YY 88 888888
+
+const Home = {
+  template: `
+    <div class="home">
+      <router-link class="home-link" :to="{ name: 'home' }">
+        <img />
+      </router-link>
+    </div>
+  `,
+};
+
+
+
+//   88""Yb    db    .dP"Y8 88  dP""b8
+//   88__dP   dPYb   `Ybo." 88 dP   `"
+//   88""Yb  dP__Yb  o.`Y8b 88 Yb
+//   88oodP dP""""Yb 8bodP' 88  YboodP
+
+const routes = [
+  {
+    path: '/',
+    component: Main,
+    children: [
+      { path: '', component: Home, name: 'home' },
+      { path: 'battle', component: PageBattle, name: 'battle' },
+    ],
+  },
+];
+const router = new VueRouter({ routes });
+
+Vue.use(VueRouter);
+new Vue({ el: '#app', router });
