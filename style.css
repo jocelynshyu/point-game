@@ -19,6 +19,7 @@ body {
 }
 
 .gray { color: #555; }
+.cyan { color: #00bcd4; }
 
 
 
@@ -57,15 +58,6 @@ body {
 }
 .rank img { transition: transform 0.3s; }
 .rank a:hover img { transform: scale(1.5) rotate(10deg); }
-
-
-
-.personal {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
 
 
 
@@ -258,4 +250,85 @@ body {
 
 .player-link {
   color: currentColor;
+}
+
+
+
+.personal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+}
+
+
+
+.profile-card {
+  display: flex;
+  width: 80%;
+  max-width: 400px;
+  padding: 15px;
+  color: #555;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.profile__avatar {
+  flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  margin: 0 15px 0 0;
+  background: #888 url("images/ghost.png") center no-repeat;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.profile__avatar .tiny {
+  opacity: 0;
+}
+
+.profile__info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.profile__info h3 {
+  margin: 10px 0;
+  font-size: 2em;
+}
+.profile__info p {
+  margin: 0;
+}
+.profile__info .point {
+  display: inline;
+  padding: 0;
+  font-size: 1.6em;
+}
+
+
+
+.record-list {
+  margin: 50px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.record {
+  display: flex;
+  font-size: 1.2em;
+  line-height: 1.5;
+  align-items: center;
+}
+
+.record > div {
+  min-width: 80px;
+  padding: 10px 0;
+}
+
+.record-point {
+  width: 130px;
+  font-size: 1.6em;
 }

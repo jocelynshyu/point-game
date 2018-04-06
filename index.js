@@ -50,34 +50,48 @@ const Main = {
   components: { Topbar },
 };
 
+const Avatar = {
+  template: `
+    <img
+      v-if="player && !error"
+      class="player__avatar"
+      v-bind:class="{ tiny: error || !isPlayerExist }"
+      :src="avatar"
+      :alt="alt"
+      @error="onAvatarError"
+    />
+  `,
+  props: ['player'],
+  data() {
+    return { error: false };
+  },
+  computed: {
+    isPlayerExist() { return this.player && this.player.id; },
+    alt() { return this.isPlayerExist ? this.player.name : ''; },
+    avatar() {
+      const { player, isPlayerExist, error } = this;
+      if (error || !isPlayerExist || !player.fb_id) return 'images/ghost.png';
+      return `https://graph.facebook.com/${player.fb_id}/picture?type=large`;
+    },
+  },
+  methods: {
+    onAvatarError() { this.error = true; },
+  },
+};
+
 const Player = {
   template: `
     <div class="player" @click="onPlayerClick">
       <img v-if="!player.id" class="icon" alt="" src="images/user-add.png" />
       <template v-else>
-        <img
-          v-if="player && !avatarError"
-          class="player__avatar"
-          :src="avatar"
-          :alt="player.name"
-          @error="onAvatarError"
-        />
-        <img v-else="avatarError" class="player__avatar tiny" alt="" src="images/ghost.png" />
+        <Avatar :player="player" />
         <p class="player__info">{{player.name}}<br /> ({{player.point}})</p>
       </template>
     </div>
   `,
+  components: { Avatar },
   props: ['player', 'onClick'],
-  data() {
-    return { avatarError: false };
-  },
-  computed: {
-    avatar() {
-      return `https://graph.facebook.com/${this.player.fb_id}/picture?type=large`;
-    },
-  },
   methods: {
-    onAvatarError() { this.avatarError = true; },
     onPlayerClick () {
       const { player, onClick } = this;
       if (onClick) onClick(player);
@@ -331,13 +345,81 @@ const PageRank = {
 
 
 
+
+//   88""Yb 888888 88b 88 .dP"Y8  dP"Yb  88b 88    db    88
+//   88__dP 88__   88Yb88 `Ybo." dP   Yb 88Yb88   dPYb   88
+//   88"""  88""   88 Y88 o.`Y8b Yb   dP 88 Y88  dP__Yb  88  .o
+//   88     888888 88  Y8 8bodP'  YbodP  88  Y8 dP""""Yb 88ood8
+
+const ProfileCard = {
+  template: `
+    <div class="profile-card">
+      <div class="profile__avatar">
+        <Avatar :player="player" />
+      </div>
+      <div class="profile__info">
+        <h3>{{player.name}}</h3>
+        <p>目前積分 <span class="point">{{player.point}}</span></p>
+      </div>
+    </div>
+  `,
+  components: { Avatar },
+  props: ['player'],
+}
+
+const RecordTeam = {
+  template: `
+    <div class="record-team">
+      <div
+        v-for="player in team"
+        :key="player.id"
+        v-bind:class="{ cyan: me === player.id }"
+      >{{player.name}}</div>
+    </div>
+  `,
+  props: ['team', 'me'],
+};
+
+const Record = {
+  template: `
+    <li class="record">
+      <RecordTeam :team="record.winners" :me="me" />
+      <div class="record-point">{{record.winner_score}} : {{record.loser_score}}</div>
+      <RecordTeam :team="record.losers" :me="me" />
+    </li>
+  `,
+  components: { RecordTeam },
+  props: ['record', 'me'],
+};
+
 const PagePlayer = {
   template: `
     <div class="personal">
-      <img class="icon" alt="" src="images/rocket-fly.png" />
-      <span style="margin-top: 20px">努力中請稍候~</span>
+      <ProfileCard v-if="player.id" :player="player" />
+      <ul class="record-list">
+        <Record v-for="(record, i) in records" :key="i" :record="record" :me="player.id" />
+      </ul>
     </div>
   `,
+
+  components: { ProfileCard, Record },
+
+  data() {
+    return {
+      player: {},
+      records: [],
+    };
+  },
+
+  mounted() {
+    const { id } = this.$route.params;
+
+    axios.get(`${API_DOMAIN}/members/detail/${id}`)
+      .then(({ data }) => { this.player = data; });
+
+    axios.get(`${API_DOMAIN}/members/records/${id}?num=0`)
+      .then(({ data: { records } }) => { this.records = records; });
+  },
 }
 
 
