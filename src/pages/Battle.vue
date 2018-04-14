@@ -148,6 +148,8 @@ main {
   width: 100%;
   max-width: 700px;
   margin: 0 auto;
+  padding-left: 0;
+  padding-right: 0;
   flex-grow: 0;
 }
 </style>

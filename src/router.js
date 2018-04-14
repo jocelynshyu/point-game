@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import smoothscroll from 'smoothscroll';
 import Main from './Main.vue';
 import Home from './pages/Home.vue';
 import Rank from './pages/Rank.vue';
@@ -22,5 +23,11 @@ const routes = [
   { path: '*', redirect: '/' },
 ];
 const router = new VueRouter({ routes });
+
+router.afterEach(() => {
+  setTimeout(() => {
+    smoothscroll(0);
+  }, 300);
+});
 
 export default router;
