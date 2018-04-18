@@ -14,12 +14,6 @@
   </head>
   <body>
     <router-view id="root"></router-view>
-
-    <script>
-      if (location.protocol === 'https:') {
-        location.href = location.href.replace(/^https:/, 'http:');
-      }
-    </script>
     <script src="dist/build.js"></script>
   </body>
 </html>
