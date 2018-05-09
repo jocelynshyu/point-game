@@ -12,6 +12,7 @@
       :onChoose="onPlayerChoose"
       :onClose="onSelectorClose"
     />
+    <RecordAdder :team1="[a1, a2]" :team2="[b1, b2]" :onFinish="updateData" />
   </div>
 </template>
 
@@ -21,9 +22,10 @@ import { getAll } from '../functions/getData';
 import Team from '../components/battle/Team.vue';
 import Result from '../components/battle/Result.vue';
 import Selector from '../components/battle/Selector.vue';
+import RecordAdder from '../components/battle/RecordAdder.vue';
 
 export default {
-  components: { Team, Result, Selector },
+  components: { Team, Result, Selector, RecordAdder },
 
   data() {
     return {
@@ -102,6 +104,7 @@ export default {
     onPosClick({ pos }) {
       this.choosingPos = pos;
     },
+
     onSelectorClose() {
       setTimeout(() => {
         this.choosingPos = null;
@@ -112,16 +115,18 @@ export default {
       this[this.choosingPos] = id;
       this.onSelectorClose();
     },
+
+    updateData() {
+      if (window.localStorage) {
+        const members = JSON.parse(localStorage.getItem('members'));
+        this.updatePlayers(members);
+      }
+
+      getAll().then((members) => this.updatePlayers(members));
+    },
   },
 
-  mounted() {
-    if (window.localStorage) {
-      const members = JSON.parse(localStorage.getItem('members'));
-      this.updatePlayers(members);
-    }
-
-    getAll().then((members) => this.updatePlayers(members));
-  },
+  mounted() { this.updateData(); },
 
   watch: {
     choosingPos(to) {

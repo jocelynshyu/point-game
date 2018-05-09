@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const API_DOMAIN = 'https://ladder.puffsnow.cc';
+import { API_DOMAIN } from '../constants/api';
 
 export const getAll = () => {
   return axios.get(`${API_DOMAIN}/members/all`)
