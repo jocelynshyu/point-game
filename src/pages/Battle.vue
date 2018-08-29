@@ -12,7 +12,6 @@
       :onChoose="onPlayerChoose"
       :onClose="onSelectorClose"
     />
-    <RecordAdder :team1="[a1, a2]" :team2="[b1, b2]" :onFinish="updateData" />
   </div>
 </template>
 
@@ -22,10 +21,9 @@ import { getAll } from '../functions/getData';
 import Team from '../components/battle/Team.vue';
 import Result from '../components/battle/Result.vue';
 import Selector from '../components/battle/Selector.vue';
-import RecordAdder from '../components/battle/RecordAdder.vue';
 
 export default {
-  components: { Team, Result, Selector, RecordAdder },
+  components: { Team, Result, Selector },
 
   data() {
     return {
