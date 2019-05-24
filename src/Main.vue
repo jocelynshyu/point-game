@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <Topbar />
     <router-view></router-view>
   </div>
@@ -27,15 +27,7 @@ body {
   box-sizing: border-box;
 }
 
-.container {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-}
-
 main {
-  flex: 1 0 auto;
-  width: 100%;
   max-width: 700px;
   margin: 0 auto;
   padding: 20px 10px;

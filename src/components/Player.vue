@@ -36,10 +36,10 @@ export default {
   border-radius: 20%;
   overflow: hidden;
   cursor: pointer;
-  will-change: transform;
+  transition: opacity 0.3s;
 
-  &:hover >>> img {
-    transform: scale(1.5) rotate(10deg);
+  &:hover {
+    opacity: 0.6;
   }
 }
 

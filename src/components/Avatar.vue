@@ -40,7 +40,5 @@ export default {
 img {
   display: block;
   width: 100%;
-  transition: 0.3s;
-  will-change: transform;
 }
 </style>
