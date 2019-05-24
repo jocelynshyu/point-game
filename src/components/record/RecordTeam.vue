@@ -20,6 +20,7 @@ export default {
 .link {
   display: block;
   padding: 5px 10px;
+  border-radius: 5px;
   transition: background 0.3s;
 
   &:hover { background: #555; }
