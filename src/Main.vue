@@ -17,7 +17,7 @@ export default {
 <style lang="scss">
 body {
   color: #fff;
-  font-family: sans-serif, "PingFang TC", "微軟正黑體";
+  font-family: "jf-jinxuan-fresh2.2-book", sans-serif, "PingFang TC", "微軟正黑體";
   text-align: center;
   letter-spacing: 0.075em;
   background: #333;
