@@ -1,12 +1,11 @@
 <template>
-  <div>
+  <div id="app">
     <Topbar />
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import router from 'vue-router';
 import Topbar from './components/Topbar.vue';
 
 export default {

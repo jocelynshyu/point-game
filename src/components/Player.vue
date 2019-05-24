@@ -1,10 +1,7 @@
 <template>
   <div class="player" @click="onPlayerClick">
-    <img v-if="!player.id" class="icon" alt="" src="static/images/user-add.png" />
-    <template v-else>
-      <Avatar :player="player" />
-      <p class="info">{{player.name}}<br /> ({{player.point}})</p>
-    </template>
+    <Avatar :player="player" />
+    <p class="info">{{player.name}}<br /> ({{player.point}})</p>
   </div>
 </template>
 

@@ -1,9 +1,14 @@
 <template>
   <img
-    v-if="player && !error"
+    v-if="avatar"
     :src="avatar"
-    :alt="alt"
+    :alt="player.name"
     @error="onAvatarError"
+  />
+  <img
+    v-else
+    src="../assets/avatar.jpg"
+    :alt="player.name"
   />
 </template>
 
@@ -16,22 +21,15 @@ export default {
   },
 
   computed: {
-    isPlayerExist() { return this.player && this.player.id; },
-
-    alt() { return this.isPlayerExist ? this.player.name : ''; },
-
     avatar() {
-      const { player, isPlayerExist, error } = this;
-      if (error || !isPlayerExist || !player.fb_id) return 'static/images/avatar.jpg';
-      return this.getFacebookAvatar(player.fb_id);
+      const { player, error } = this;
+      if (error || !player || !player.fb_id) return;
+      return `https://graph.facebook.com/${player.fb_id}/picture?type=large`;
     },
   },
 
   methods: {
     onAvatarError() { this.error = true; },
-    getFacebookAvatar(id) {
-      return `https://graph.facebook.com/${id}/picture?type=large`;
-    },
   },
 };
 </script>

@@ -1,24 +1,27 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import smoothscroll from 'smoothscroll';
-import Main from './Main.vue';
-import Rank from './pages/Rank.vue';
-import Player from './pages/Player.vue';
+import Vue from 'vue'
+import Router from 'vue-router'
+import smoothscroll from 'smoothscroll'
+import Rank from './pages/Rank.vue'
 
-Vue.use(VueRouter);
+Vue.use(Router)
 
 const routes = [
   {
     path: '/',
-    component: Main,
-    children: [
-      { path: '', component: Rank, name: 'home' },
-      { path: 'player/:id', component: Player, name: 'player' },
-    ],
+    name: 'home',
+    component: Rank
   },
-  { path: '*', redirect: '/' },
+  {
+    path: '/player/:id',
+    name: 'player',
+    component: () => import('./pages/Player.vue')
+  },
+  {
+    path: '*',
+    redirect: '/'
+  },
 ];
-const router = new VueRouter({ routes });
+const router = new Router({ routes });
 
 router.afterEach(() => {
   setTimeout(() => {
