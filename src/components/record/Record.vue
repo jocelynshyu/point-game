@@ -21,11 +21,22 @@ export default {
 
 <style lang="scss" scoped>
 .record {
+  position: relative;
   display: flex;
   padding: 10px 0;
   font-size: 1.2em;
   line-height: 1.5;
   align-items: center;
+
+  & + &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 5%;
+    right: 5%;
+    height: 1px;
+    background: #555;
+  }
 }
 
 .points {

@@ -17,6 +17,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.team {
+  min-width: 90px;
+}
+
 .link {
   display: block;
   padding: 5px 10px;
