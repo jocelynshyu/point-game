@@ -1,17 +1,6 @@
 <template>
-  <div id="app">
-    <Topbar />
-    <router-view></router-view>
-  </div>
+  <router-view></router-view>
 </template>
-
-<script>
-import Topbar from './components/Topbar.vue';
-
-export default {
-  components: { Topbar },
-}
-</script>
 
 <style lang="scss">
 body {
@@ -27,17 +16,18 @@ body {
 }
 
 main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   max-width: 700px;
+  min-height: 100vh;
   margin: 0 auto;
   padding: 20px 10px;
 
-  @media (min-width: 500px) { padding: 50px 10px 70px; }
-}
-
-.icon {
-  width: 30px;
-  height: 30px;
-  filter: invert(1);
+  @media (min-width: 600px) {
+    flex-direction: row;
+  }
 }
 
 a {
