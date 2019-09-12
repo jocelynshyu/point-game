@@ -15,6 +15,6 @@ const routes = [
     redirect: '/'
   },
 ];
-const router = new Router({ routes, mode: 'history' });
+const router = new Router({ routes });
 
 export default router;
